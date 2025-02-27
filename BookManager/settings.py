@@ -13,10 +13,11 @@ SECRET_KEY = 'django-insecure-hq#ph6kk555ywo)td1md9h+#1w4a-xd2(4-#sjy9gu%%mx))%k
 DEBUG = True
 
 ALLOWED_HOSTS = []
+BLOCKED_IPS = ['192.168.1.1', '10.0.0.1']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
-# Application definition
+# Application
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,7 +45,7 @@ MIDDLEWARE = [
     'middleware.ip_block_middleware.IpBlockMiddleware'
 ]
 
-ROOT_URLCONF = 'BookManager.urls'  # Updated to BookManager
+ROOT_URLCONF = 'BookManager.urls'
 
 TEMPLATES = [
     {
@@ -62,7 +63,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'BookManager.wsgi.application'  # Updated to BookManager
+WSGI_APPLICATION = 'BookManager.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -70,9 +71,9 @@ WSGI_APPLICATION = 'BookManager.wsgi.application'  # Updated to BookManager
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bookapp_db',  # Use your actual database name
+        'NAME': 'bookapp_db',
         'USER': 'postgres',
-        'PASSWORD': 'tJ854',  # Use your actual database password
+        'PASSWORD': 'tJ854',
         'HOST': 'localhost',
         'PORT': '5432',
     }
