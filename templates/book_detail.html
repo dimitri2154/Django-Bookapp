@@ -10,8 +10,10 @@
   <p>Description: {{ book.description }}</p>
   <p>Publication Date: {{ book.publication_date }}</p>
   <p>Price: ${{ book.price }}</p>
+
   {% if book.cover_image %}
     <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover">
   {% endif %}
+
 </body>
 </html>

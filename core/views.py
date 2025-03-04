@@ -3,6 +3,7 @@ from .models import Book
 from .forms import BookForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def book_list(request):
     title = request.GET.get('title')
@@ -15,7 +16,17 @@ def book_list(request):
     if author:
         filters |= Q(author__icontains=author)
 
-    books = Book.objects.filter(filters) if filters else Book.objects.all()
+    books_list = Book.objects.filter(filters) if filters else Book.objects.all()
+    paginator = Paginator(books_list, 10)  # Show 10 books per page
+
+    page = request.GET.get('page')
+    try:
+        books = paginator.page(page)
+    except PageNotAnInteger:
+        books = paginator.page(1)
+    except EmptyPage:
+        books = paginator.page(paginator.num_pages)
+
     return render(request, 'book_list.html', {'books': books})
 
 def book_detail(request, pk):

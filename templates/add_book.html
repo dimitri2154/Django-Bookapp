@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Add Book</title>
+    <title>Add Book</title>
 </head>
 <body>
-  <h1>Add Book</h1>
+    <h1>Add Book</h1>
 
-  <form method="post" enctype="multipart/form-data">  {# Important for image uploads #}
-    {% csrf_token %}  {# Security token for Django forms #}
-    {{ form.as_p }}  {# Render the form fields as paragraphs #}
-    <button type="submit">Add Book</button>
-  </form>
+    <form method="post" enctype="multipart/form-data">  {# Important for image uploads #}
+        {% csrf_token %}  {# Security token for Django forms #}
+        {{ form.as_p }}  {# Render the form fields as paragraphs #}
+        <button type="submit">Add Book</button>
+    </form>
 
 </body>
 </html>
