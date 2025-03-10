@@ -3,61 +3,53 @@ from .models import Book
 from .forms import BookForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-def book_list(request):
-    title = request.GET.get('title')
-    author = request.GET.get('author')
 
-    filters = Q()
+class BookListView(ListView):
+    model = Book
+    template_name = 'book_list.html'
+    context_object_name = 'books'
 
-    if title:
-        filters |= Q(title__icontains=title)
-    if author:
-        filters |= Q(author__icontains=author)
+    def get_queryset(self):
+        title = self.request.GET.get('title')
+        author = self.request.GET.get('author')
 
-    books_list = Book.objects.filter(filters) if filters else Book.objects.all()
-    paginator = Paginator(books_list, 10)  # Show 10 books per page
+        filters = Q()
 
-    page = request.GET.get('page')
-    try:
-        books = paginator.page(page)
-    except PageNotAnInteger:
-        books = paginator.page(1)
-    except EmptyPage:
-        books = paginator.page(paginator.num_pages)
+        if title:
+            filters |= Q(title__icontains=title)
+        if author:
+            filters |= Q(author__icontains=author)
 
-    return render(request, 'book_list.html', {'books': books})
+        return Book.objects.filter(filters) if filters else Book.objects.all()
 
-def book_detail(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    return render(request, 'book_detail.html', {'book': book})
 
-@login_required(login_url='login')
-def add_book(request):
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('book_list')
-    else:
-        form = BookForm()
-    return render(request, 'add_book.html', {'form': form})
+class BookDetailView(DetailView):
+    model = Book
+    template_name = 'book_detail.html'
+    context_object_name = 'book'
 
-@login_required(login_url='login')
-def change_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES, instance=book)
-        if form.is_valid():
-            form.save()
-            return redirect('book_detail', pk=pk)
-    else:
-        form = BookForm(instance=book)
-    return render(request, 'change_book.html', {'form': form})
 
-@login_required(login_url='login')
-def delete_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    book.delete()
-    return redirect('book_list')
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class AddBookView(CreateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'add_book.html'
+    success_url = '/books/'
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class ChangeBookView(UpdateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'change_book.html'
+    success_url = '/books/'
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class DeleteBookView(DeleteView):
+    model = Book
+    template_name = 'book_confirm_delete.html'
+    success_url = '/books/'
